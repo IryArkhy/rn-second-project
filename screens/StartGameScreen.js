@@ -13,7 +13,7 @@ import Input from '../components/Input';
 import NumberContainer from '../components/NumberContainer';
 import COLORS from '../constants/colors';
 
-const StartGameScreen = () => {
+const StartGameScreen = ({ onStartGame }) => {
   const [enteredValue, setEnteredValue] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState('');
@@ -41,13 +41,15 @@ const StartGameScreen = () => {
     setSelectedNumber(chosenNumber);
   };
 
+  const handleConfirmedStart = () => onStartGame(selectedNumber);
+
   let confirmedOutput;
   if (confirmed) {
     confirmedOutput = (
       <Card style={styles.summaryContainer}>
         <Text> You selected</Text>
         <NumberContainer>{selectedNumber}</NumberContainer>
-        <Button title="START GAME" />
+        <Button title="START GAME" onPress={handleConfirmedStart} />
       </Card>
     );
   }
@@ -102,6 +104,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginVertical: 10,
+    // using custom font -  fotnWeight does not work for custom fonts with expo
+    fontFamily: 'open-sans-bold',
   },
   inputContainer: {
     width: 300,
