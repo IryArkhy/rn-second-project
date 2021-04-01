@@ -11,6 +11,7 @@ import {
 import Card from '../components/Card';
 import Input from '../components/Input';
 import NumberContainer from '../components/NumberContainer';
+import BodyText from '../components/BodyText';
 import COLORS from '../constants/colors';
 
 const StartGameScreen = ({ onStartGame }) => {
@@ -59,7 +60,7 @@ const StartGameScreen = ({ onStartGame }) => {
       <View style={styles.screen}>
         <Text style={styles.title}>Start a New Game!</Text>
         <Card style={styles.inputContainer}>
-          <Text>Select a Number</Text>
+          <BodyText>Select a Number</BodyText>
           <Input
             style={styles.input}
             options={{
