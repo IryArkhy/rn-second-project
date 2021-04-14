@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 25,
+    width: '90%',
   },
   buttonText: {
     color: 'white',
     fontFamily: 'open-sans',
     fontSize: 18,
-    width: '90%',
   },
 });
 

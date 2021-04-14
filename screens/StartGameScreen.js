@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
   StyleSheet,
   Button,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
   Keyboard,
   Alert,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
 import Card from '../components/Card';
 import Input from '../components/Input';
@@ -19,6 +22,21 @@ const StartGameScreen = ({ onStartGame }) => {
   const [enteredValue, setEnteredValue] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState('');
+  const [buttonWidth, setButtonWidth] = useState(
+    Dimensions.get('window').width / 4,
+  );
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setButtonWidth(Dimensions.get('window').width / 4);
+    };
+
+    Dimensions.addEventListener('change', updateLayout);
+    return () => {
+      Dimensions.removeEventListener('change', updateLayout);
+    };
+  }, [setButtonWidth]);
+
   const handleOnChange = (inputText) => {
     setEnteredValue(inputText.replace(/[^0-9]/g, ''));
   };
@@ -56,43 +74,49 @@ const StartGameScreen = ({ onStartGame }) => {
     );
   }
 
+  // keyboardVerticalOffset = to the size of the imput usually (or vigger)
   return (
-    <TouchableWithoutFeedback onPress={handleCloseKeyboard}>
-      <View style={styles.screen}>
-        <Text style={styles.title}>Start a New Game!</Text>
-        <Card style={styles.inputContainer}>
-          <BodyText>Select a Number</BodyText>
-          <Input
-            style={styles.input}
-            options={{
-              blurOnSubmit: true,
-              autoCorrect: false,
-              keyboardType: 'number-pad',
-              maxLength: 2,
-              onChangeText: handleOnChange,
-              value: enteredValue,
-            }}
-          />
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button
-                title="Reset"
-                color={COLORS.accent}
-                onPress={handleReset}
+    <ScrollView>
+      {/* position is good for iOS, padding for android */}
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset="30">
+        <TouchableWithoutFeedback onPress={handleCloseKeyboard}>
+          <View style={styles.screen}>
+            <Text style={styles.title}>Start a New Game!</Text>
+            <Card style={styles.inputContainer}>
+              <BodyText>Select a Number</BodyText>
+              <Input
+                style={styles.input}
+                options={{
+                  blurOnSubmit: true,
+                  autoCorrect: false,
+                  keyboardType: 'number-pad',
+                  maxLength: 2,
+                  onChangeText: handleOnChange,
+                  value: enteredValue,
+                }}
               />
-            </View>
-            <View style={styles.button}>
-              <Button
-                title="Start"
-                color={COLORS.primary}
-                onPress={handleStart}
-              />
-            </View>
+              <View style={styles.buttonContainer}>
+                <View style={[styles.button, { width: buttonWidth }]}>
+                  <Button
+                    title="Reset"
+                    color={COLORS.accent}
+                    onPress={handleReset}
+                  />
+                </View>
+                <View style={[styles.button, { width: buttonWidth }]}>
+                  <Button
+                    title="Start"
+                    color={COLORS.primary}
+                    onPress={handleStart}
+                  />
+                </View>
+              </View>
+            </Card>
+            {confirmedOutput}
           </View>
-        </Card>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
@@ -106,12 +130,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginVertical: 10,
-    // using custom font -  fotnWeight does not work for custom fonts with expo
     fontFamily: 'open-sans-bold',
   },
   inputContainer: {
-    width: 300,
-    maxWidth: '80%',
+    width: '80%',
+    // maxWidth: '80%'
+    maxWidth: '95%', // ensures that the element will no exceed the bondries of the screen and go beyond it
+    minWidth: 300,
     alignItems: 'center',
   },
   buttonContainer: {
@@ -121,7 +146,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   button: {
-    width: 100,
+    // width: 100,
+    width: Dimensions.get('window').width / 4, // calculatted when the app starts (!)
   },
   input: {
     width: 50,
