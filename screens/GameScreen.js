@@ -6,6 +6,7 @@ import {
   Alert,
   StyleSheet,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import NumberContainer from '../components/NumberContainer';
 import Card from '../components/Card';
@@ -24,10 +25,17 @@ function generateRandomBetween(min, max, exclude) {
   return rndNum;
 }
 
-const renderListItem = (value, numOfRound) => (
-  <View style={styles.listItem} key={value}>
-    <BodyText>#{numOfRound}: </BodyText>
-    <BodyText>{value}</BodyText>
+// const renderListItem = (value, numOfRound) => (
+//   <View style={styles.listItem} key={value}>
+//     <BodyText>#{numOfRound}: </BodyText>
+//     <BodyText>{value}</BodyText>
+//   </View>
+// );
+
+const renderListItem = (listLength, itemData) => (
+  <View style={styles.listItem} key={itemData.item}>
+    <BodyText>#{listLength - itemData.index}: </BodyText>
+    <BodyText>{itemData.item}</BodyText>
   </View>
 );
 
@@ -89,11 +97,18 @@ const GameScreen = ({ userChoise, onGameOver }) => {
         />
       </Card>
       <View style={styles.listContainer}>
-        <ScrollView contentContainerStyle={styles.list}>
+        {/* <ScrollView contentContainerStyle={styles.list}>
           {pastGuesses.map((guess, idx) =>
             renderListItem(guess, pastGuesses.length - idx),
           )}
-        </ScrollView>
+        </ScrollView> */}
+        <FlatList
+          keyExtractor={(item) => item.toString()}
+          data={pastGuesses}
+          // automatically passes the last argument - {item, idx} into bind function
+          renderItem={renderListItem.bind(null, pastGuesses.length)}
+          contentContainerStyle={styles.list}
+        />
       </View>
     </View>
   );
